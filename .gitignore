@@ -1,4 +1,4 @@
 __pycache__/
 *.pyc
 *.pyo
-money-log/data/
+# money-log/data/  ← 주석처리: Excel 파일 포함
