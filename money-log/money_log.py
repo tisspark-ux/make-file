@@ -3,7 +3,8 @@
 from openpyxl import Workbook
 from sheets import (config_sheet, budget_sheet, banksalad_sheet,
                     monthly_sheet, summary_sheet, asset_sheet,
-                    dashboard_sheet, payment_sheet, analysis_sheet)
+                    dashboard_sheet, payment_sheet, analysis_sheet,
+                    loan_sheet)
 
 
 def create(year: int = 2026, output_path: str = None) -> str:
@@ -25,6 +26,7 @@ def create(year: int = 2026, output_path: str = None) -> str:
     asset_sheet.build(wb)              # 17: 자산현황
     payment_sheet.build(wb)            # 18: 결제수단
     analysis_sheet.build(wb, year)     # 19: 분석
+    loan_sheet.build(wb)               # 20: 대출상환
 
     wb.save(output_path)
     return output_path
