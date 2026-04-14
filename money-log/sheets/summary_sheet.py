@@ -7,6 +7,7 @@ from openpyxl.chart.marker import Marker
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.utils import get_column_letter
 from .budget_sheet import BUDGET_ITEMS
+from .banksalad_sheet import DATA_LAST_ROW
 
 # 편차 기준: 평균 대비 이 비율(%) 초과 시 비고 입력 촉구
 DEVIATION_THRESHOLD = 0.20  # 20%
@@ -30,7 +31,7 @@ def _align(h="center", v="center"):
 
 
 def build(wb, year: int = 2026):
-    ws = wb.create_sheet("요약", 3)
+    ws = wb.create_sheet("요약")
     ws.sheet_view.showGridLines = False
 
     # B~J: 표시 컬럼 / K·L: 차트 평균선 헬퍼 (작은 폭)
@@ -210,6 +211,10 @@ def build(wb, year: int = 2026):
     events_row = chart_row + 23
     _add_events_section(ws, data_start, events_row)
 
+    # ── ⑤ 미분류 거래 감지 ───────────────────────────────────
+    unclassified_row = events_row + 18
+    _add_unclassified_section(ws, unclassified_row)
+
     return ws
 
 
@@ -291,6 +296,54 @@ def _add_events_section(ws, data_start, anchor_row):
                    f"J${data_start}:J${data_start+11}),"
                    f"J${data_start}:J${data_start+11}<>\"\"),"
                    f"\"아직 입력된 특이사항이 없습니다.\")"))
+
+
+def _add_unclassified_section(ws, anchor_row):
+    """뱅샐 대분류가 예산 카테고리에 없는 거래 자동 감지"""
+    _section_title(ws, anchor_row, "⑤ 미분류 거래 감지  (예산 카테고리 미매핑 지출 자동 표시)")
+
+    # 알려진 카테고리 배열 상수
+    known_cats = sorted(set(main for main, *_ in BUDGET_ITEMS))
+    cats_array = "{" + ",".join(f'"{c}"' for c in known_cats) + "}"
+
+    hint_row = anchor_row + 1
+    hint = ws.cell(row=hint_row, column=2,
+                   value=f"※ 뱅샐 대분류가 예산 항목({', '.join(known_cats)})에 없는 지출 거래를 표시합니다. "
+                         "해당 거래가 없으면 '미분류 거래 없음'이 표시됩니다.")
+    hint.font = Font(size=8, color="888888", italic=True)
+    hint.alignment = _align(h="left")
+    ws.merge_cells(f"B{hint_row}:J{hint_row}")
+    ws.row_dimensions[hint_row].height = 14
+
+    # 헤더
+    hrow = anchor_row + 2
+    ws.row_dimensions[hrow].height = 22
+    headers = ["날짜", "대분류", "소분류", "내용", "금액"]
+    hcolors = ["1F4E79", "C00000", "C00000", "FF8C00", "C00000"]
+    for ci, (h, hc) in enumerate(zip(headers, hcolors), start=2):
+        c = ws.cell(row=hrow, column=ci, value=h)
+        c.fill = _fill(hc)
+        c.font = _font(bold=True, color="FFFFFF", size=10)
+        c.alignment = _align()
+        c.border = _border()
+
+    # FILTER: 미분류 거래 (대분류가 known_cats에 없는 지출)
+    data_row = anchor_row + 3
+    ws.cell(row=data_row, column=2,
+            value=(f'=IFERROR('
+                   f'FILTER('
+                   f'CHOOSE({{1,2,3,4,5}},'
+                   f'뱅샐입력!A$4:A${DATA_LAST_ROW},'
+                   f'뱅샐입력!D$4:D${DATA_LAST_ROW},'
+                   f'뱅샐입력!E$4:E${DATA_LAST_ROW},'
+                   f'뱅샐입력!F$4:F${DATA_LAST_ROW},'
+                   f'뱅샐입력!G$4:G${DATA_LAST_ROW}),'
+                   f'(뱅샐입력!C$4:C${DATA_LAST_ROW}="지출")*'
+                   f'(YEAR(뱅샐입력!A$4:A${DATA_LAST_ROW})=설정!C3)*'
+                   f'(뱅샐입력!D$4:D${DATA_LAST_ROW}<>"")*'
+                   f'ISERROR(MATCH(뱅샐입력!D$4:D${DATA_LAST_ROW},{cats_array},0))),'
+                   f'"미분류 거래 없음")'))
+    ws.cell(row=data_row, column=2).number_format = "YYYY-MM-DD"
 
 
 def _section_title(ws, row, title):
