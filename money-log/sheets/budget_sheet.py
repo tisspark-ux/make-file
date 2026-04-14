@@ -21,7 +21,7 @@ def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v, wrap_text=True)
 
 
-# ── 수입 항목 기본값 ─────────────────────────────────────────
+# ── 수입 항목 ────────────────────────────────────────────────
 # (항목명, 비고, Tiss금액_만원, Tiss주기, Tiss대상월, JM금액_만원, JM주기, JM대상월)
 INCOME_ITEMS = [
     ("월급",        "",         554.3,  "M", "",       0,    "",  ""),
@@ -34,7 +34,7 @@ INCOME_ITEMS = [
     ("금융수입",    "",           0,     "M", "",       0,    "",  "이자/배당 등"),
 ]
 
-# ── 예산 항목 기본값 ─────────────────────────────────────────
+# ── 예산(소비) 항목 ──────────────────────────────────────────
 # (대분류, 중분류, 공동_만원, Tiss_만원, JM_만원, 주기, 납부월, 비고)
 BUDGET_ITEMS = [
     ("고정비",    "교통비",        0,    8,    8,   "M", "",   ""),
@@ -57,6 +57,15 @@ BUDGET_ITEMS = [
     ("기타",      "기타",          0,    0,    0,   "M", "",   ""),
 ]
 
+# ── 저축 목표 항목 ───────────────────────────────────────────
+# (항목명, 금액_만원, 비고)
+SAVINGS_ITEMS = [
+    ("청약저축",    20,  ""),
+    ("정기적금",     0,  ""),
+    ("비상금 적립",  0,  ""),
+    ("기타저축",     0,  ""),
+]
+
 
 def build(wb, year: int = 2026):
     ws = wb.create_sheet("수입&예산")
@@ -66,21 +75,19 @@ def build(wb, year: int = 2026):
                   8: 8, 9: 10, 10: 10, 11: 6, 12: 8, 13: 6, 14: 20}
     for col, w in col_widths.items():
         ws.column_dimensions[get_column_letter(col)].width = w
-    for r in range(1, 80):
+    for r in range(1, 100):
         ws.row_dimensions[r].height = 20
 
-    row = 2  # 시작 행
+    row = 2
 
-    # ════════════════════════════════════
+    # ════════════════════════════════
     # [수입] 섹션
-    # ════════════════════════════════════
+    # ════════════════════════════════
     row = _section_header(ws, row, "수입", year)
     row += 1
 
-    # 컬럼 헤더
     income_headers = ["항목", "비고", "Tiss 금액", "주기", "대상월",
                       "JM 금액", "주기", "대상월", "", "월수입(Tiss)", "월수입(JM)", "월수입(합계)", "연수입(합계)"]
-    income_header_row = row
     for ci, h in enumerate(income_headers, start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill("2E75B6")
@@ -89,7 +96,6 @@ def build(wb, year: int = 2026):
         c.border = _border()
     row += 1
 
-    # 데이터 행
     income_data_start = row
     for i, (item, note, tiss_amt, tiss_cycle, tiss_month,
             jm_amt, jm_cycle, jm_month) in enumerate(INCOME_ITEMS):
@@ -101,10 +107,8 @@ def build(wb, year: int = 2026):
             c.fill = _fill(fill_color)
             c.alignment = _align()
             c.border = _border()
-            if ci in (4, 7) and val:  # 금액 셀
+            if ci in (4, 7) and val:
                 c.number_format = '#,##0.0"만"'
-
-        # 월수입(Tiss): M이면 금액, Y이면 0
         r = row
         ws.cell(row=r, column=11,
                 value=f'=IF(E{r}="M",D{r},0)').number_format = '#,##0.0"만"'
@@ -120,22 +124,20 @@ def build(wb, year: int = 2026):
             ws.cell(row=r, column=ci).border = _border()
         row += 1
 
-    # 합계 행
     income_data_end = row - 1
     _total_row(ws, row, income_data_start, income_data_end,
                sum_cols=[4, 7, 11, 12, 13, 14], label="월수입 합계")
     income_total_row = row
     row += 2
 
-    # ════════════════════════════════════
+    # ════════════════════════════════
     # [예산(소비)] 섹션
-    # ════════════════════════════════════
+    # ════════════════════════════════
     row = _section_header(ws, row, "예산(소비)", year)
     row += 1
 
     budget_headers = ["대분류", "중분류", "공동", "Tiss", "JM",
                       "주기", "합계(월)", "납부월", "비고"]
-    budget_header_row = row
     for ci, h in enumerate(budget_headers, start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill("375623")
@@ -156,8 +158,6 @@ def build(wb, year: int = 2026):
             c.border = _border()
             if ci in (4, 5, 6) and val:
                 c.number_format = '#,##0.0"만"'
-
-        # 합계(월): 공동+Tiss+JM (연간이면 /12)
         r = row
         ws.cell(row=r, column=8,
                 value=f'=IF(G{r}="M",D{r}+E{r}+F{r},(D{r}+E{r}+F{r})/12)').number_format = '#,##0.0"만"'
@@ -172,21 +172,83 @@ def build(wb, year: int = 2026):
     budget_total_row = row
     row += 2
 
-    # ════════════════════════════════════
-    # 순수입 요약
-    # ════════════════════════════════════
+    # ── 순수입 요약 ───────────────────────────────────────────
+    순수입_row = row
     c = ws.cell(row=row, column=2, value="월 순수입 (수입-지출)")
     c.font = _font(bold=True, color="FFFFFF")
     c.fill = _fill("C00000")
     c.alignment = _align()
     c.border = _border()
     ws.merge_cells(f"B{row}:G{row}")
-
     c2 = ws.cell(row=row, column=8,
                  value=f"=K{income_total_row}-H{budget_total_row}")
     c2.number_format = '#,##0.0"만"'
     c2.font = _font(bold=True)
     c2.fill = _fill("FFE0E0")
+    c2.alignment = _align()
+    c2.border = _border()
+    row += 3
+
+    # ════════════════════════════════
+    # ③ [저축 목표] 섹션
+    # ════════════════════════════════
+    row = _section_header(ws, row, "저축 목표", year)
+    row += 1
+
+    savings_headers = ["항목", "금액(만원)", "비고"]
+    for ci, h in enumerate(savings_headers, start=2):
+        c = ws.cell(row=row, column=ci, value=h)
+        c.fill = _fill("404040")
+        c.font = _font(bold=True, color="FFFFFF", size=10)
+        c.alignment = _align()
+        c.border = _border()
+    row += 1
+
+    savings_data_start = row
+    for i, (item, amount, note) in enumerate(SAVINGS_ITEMS):
+        fill_color = "FFF2CC" if i % 2 == 0 else "FFFFFF"
+        for ci, val in [(2, item), (3, amount or 0), (4, note)]:
+            c = ws.cell(row=row, column=ci, value=val)
+            c.fill = _fill(fill_color)
+            c.alignment = _align()
+            c.border = _border()
+            if ci == 3:
+                c.number_format = '#,##0.0"만"'
+        row += 1
+
+    savings_data_end = row - 1
+
+    # 저축 합계 행
+    for ci in range(2, 12):
+        c = ws.cell(row=row, column=ci)
+        c.fill = _fill("404040")
+        c.font = _font(bold=True, color="FFFFFF")
+        c.alignment = _align()
+        c.border = _border()
+    ws.cell(row=row, column=2, value="월 저축 합계")
+    ws.merge_cells(f"B{row}:C{row}")
+    savings_total_cell = ws.cell(row=row, column=4,
+                                 value=f"=SUM(C{savings_data_start}:C{savings_data_end})")
+    savings_total_cell.number_format = '#,##0.0"만"'
+    savings_total_cell.font = _font(bold=True)
+    savings_total_cell.fill = _fill("FFE699")
+    savings_total_cell.alignment = _align()
+    savings_total_cell.border = _border()
+    savings_total_row = row
+    row += 2
+
+    # 월 순잉여금 (순수입 - 저축)
+    c = ws.cell(row=row, column=2, value="월 순잉여금 (저축 후 남는 돈)")
+    c.font = _font(bold=True, color="FFFFFF")
+    c.fill = _fill("1F4E79")
+    c.alignment = _align()
+    c.border = _border()
+    ws.merge_cells(f"B{row}:G{row}")
+    c2 = ws.cell(row=row, column=8,
+                 value=f"=H{순수입_row}-D{savings_total_row}")
+    c2.number_format = '#,##0.0"만"'
+    c2.font = _font(bold=True)
+    c2.fill = _fill("D6E4F0")
     c2.alignment = _align()
     c2.border = _border()
 
@@ -212,7 +274,6 @@ def _total_row(ws, row, start, end, sum_cols, label):
     c.alignment = _align()
     c.border = _border()
     ws.merge_cells(f"B{row}:C{row}")
-
     for ci in range(4, 15):
         if ci in sum_cols:
             cell = ws.cell(row=row, column=ci,

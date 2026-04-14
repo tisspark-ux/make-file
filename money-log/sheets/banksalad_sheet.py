@@ -23,6 +23,9 @@ def _align(h="center", v="center"):
 
 HEADERS = ["날짜", "시간", "타입", "대분류", "소분류", "내용", "금액", "화폐", "결제수단", "메모"]
 
+# 수식 범위 상한 (연간 최대 거래 건수 여유 포함)
+DATA_LAST_ROW = 3003
+
 
 def build(wb):
     ws = wb.create_sheet("뱅샐입력")
