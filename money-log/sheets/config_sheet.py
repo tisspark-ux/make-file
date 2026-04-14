@@ -2,6 +2,7 @@
 
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
+from version import VERSION
 
 
 # ── 스타일 헬퍼 ──────────────────────────────────────────────
@@ -65,9 +66,10 @@ def build(wb, year: int = 2026):
     _section_title(ws, 2, 2, "기본 설정")
 
     settings = [
-        ("연도",    year,   "이 셀만 바꾸면 전체 시트 자동 업데이트"),
-        ("담당자1", "Tiss", ""),
-        ("담당자2", "JM",   ""),
+        ("연도",    year,            "이 셀만 바꾸면 전체 시트 자동 업데이트"),
+        ("담당자1", "Tiss",          ""),
+        ("담당자2", "JM",            ""),
+        ("버전",    f"v{VERSION}",   "마이너 +0.01 / 메이저 +1.00"),
     ]
     for i, (label, value, note) in enumerate(settings, start=3):
         _label_cell(ws, i, 2, label)

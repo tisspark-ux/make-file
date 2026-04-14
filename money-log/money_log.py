@@ -5,11 +5,12 @@ from sheets import (config_sheet, budget_sheet, banksalad_sheet,
                     monthly_sheet, summary_sheet, asset_sheet,
                     dashboard_sheet, payment_sheet, analysis_sheet,
                     loan_sheet)
+from version import VERSION
 
 
 def create(year: int = 2026, output_path: str = None) -> str:
     if output_path is None:
-        output_path = f"data/가계부_{year}.xlsx"
+        output_path = f"data/가계부_{year}_v{VERSION}.xlsx"
 
     wb = Workbook()
     wb.remove(wb.active)  # 기본 시트 제거
