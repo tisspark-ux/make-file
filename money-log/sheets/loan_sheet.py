@@ -413,7 +413,8 @@ def build(wb):
         )
     )
 
-    ws.freeze_panes = f"A{SCHED_START}"
+    # 틀고정 없음 — 위쪽 정보 구역(66행)이 화면보다 커서
+    # 틀고정 시 스케줄이 보이지 않으므로 자유 스크롤로 유지
     return ws
 
 
