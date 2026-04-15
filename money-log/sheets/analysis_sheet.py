@@ -225,9 +225,9 @@ def build(wb, year: int = 2026):
     ws.conditional_formatting.add(
         hm_range,
         ColorScaleRule(
-            start_type="num",   start_value=0,        start_color="FFFFFF",
-            mid_type="percentile", mid_value=50,       mid_color="FFEB84",
-            end_type="percentile", end_value=100,      end_color="C0392B"
+            start_type="num",   start_value=0,        start_color="FFFFFFFF",
+            mid_type="percentile", mid_value=50,       mid_color="FFFFEB84",
+            end_type="percentile", end_value=100,      end_color="FFC0392B"
         )
     )
 
