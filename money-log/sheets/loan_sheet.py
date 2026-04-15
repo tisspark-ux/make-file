@@ -43,14 +43,14 @@ SCHED_END      = SCHED_START + LOAN_MONTHS - 1  # = 426
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 def _border():
     s = _side()
     return Border(left=s, right=s, top=s, bottom=s)
 def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v, wrap_text=False)
 
@@ -90,7 +90,7 @@ def build(wb):
     # ════════════════════════════════════════════════════════
     ws.row_dimensions[row].height = 32
     t = ws.cell(row=row, column=1, value="대출 상환 추적표")
-    t.font = _font(bold=True, size=16, color="17375E")
+    t.font = Font(name="Calibri Light", bold=False, size=16, color="1A2B4A")
     t.alignment = _align(h="left")
     ws.merge_cells("A1:J1")
 
@@ -117,14 +117,14 @@ def build(wb):
     for r, label, val, fmt, note in info_rows:
         ws.row_dimensions[r].height = 22
         lc = ws.cell(row=r, column=1, value=label)
-        lc.fill = _fill("1B6CA8")
+        lc.fill = _fill("2471A3")
         lc.font = _font(bold=True, color="FFFFFF", size=10)
         lc.alignment = _align(h="left")
         lc.border = _border()
         ws.merge_cells(f"A{r}:B{r}")
 
         vc = ws.cell(row=r, column=3, value=val)
-        vc.fill = _fill("EBF5FF")
+        vc.fill = _fill("F4F8FC")
         vc.font = _font(bold=True, size=11)
         vc.alignment = _align()
         vc.border = _border()
@@ -133,7 +133,7 @@ def build(wb):
         ws.merge_cells(f"C{r}:D{r}")
 
         nc = ws.cell(row=r, column=5, value=note)
-        nc.fill = _fill("EBF5FF")
+        nc.fill = _fill("F4F8FC")
         nc.font = Font(size=9, color="888888", italic=True)
         nc.alignment = _align(h="left")
         nc.border = _border()
@@ -155,7 +155,7 @@ def build(wb):
     # 금리 테이블 헤더
     ws.row_dimensions[RATE_HDR_ROW].height = 22
     rate_headers = ["변동일", "총금리 (%)", "비고 (기준금리·변동 사유 등)"]
-    rate_hcolors = ["17375E", "2D6A4F", "17375E"]
+    rate_hcolors = ["1A2B4A", "1E8449", "1A2B4A"]
     rate_spans   = ["A", "B", "C:J"]  # 열 병합 범위
     for (col_start, span_end), h, hc in zip(
             [("A","A"),("B","B"),("C","J")], rate_headers, rate_hcolors):
@@ -171,7 +171,7 @@ def build(wb):
     for i in range(RATE_DATA_END - RATE_DATA_START + 1):
         r = RATE_DATA_START + i
         ws.row_dimensions[r].height = 20
-        fill_c = "EAFAF1" if i == 0 else ("F8FAFC" if i % 2 == 0 else "FFFFFF")
+        fill_c = "E8F8F0" if i == 0 else ("F8FAFB" if i % 2 == 0 else "FFFFFF")
 
         # 날짜 열
         date_cell = ws.cell(row=r, column=1,
@@ -243,7 +243,7 @@ def build(wb):
 
         # 레이블1
         lc1 = ws.cell(row=r, column=1, value=l1)
-        lc1.fill = _fill("17375E")
+        lc1.fill = _fill("1A2B4A")
         lc1.font = _font(bold=True, color="FFFFFF", size=10)
         lc1.alignment = _align()
         lc1.border = _border()
@@ -260,7 +260,7 @@ def build(wb):
 
         # 레이블2
         lc2 = ws.cell(row=r, column=5, value=l2)
-        lc2.fill = _fill("2D6A4F")
+        lc2.fill = _fill("1E8449")
         lc2.font = _font(bold=True, color="FFFFFF", size=10)
         lc2.alignment = _align()
         lc2.border = _border()
@@ -268,7 +268,7 @@ def build(wb):
 
         # 값2
         vc2 = ws.cell(row=r, column=7, value=f2)
-        vc2.fill = _fill("EAFAF1")
+        vc2.fill = _fill("E8F8F0")
         vc2.font = _font(bold=True, size=12)
         vc2.alignment = _align()
         vc2.border = _border()
@@ -294,8 +294,8 @@ def build(wb):
     ws.row_dimensions[SCHED_HDR_ROW].height = 22
     sched_headers = ["회차", "납입일", "적용금리", "월납입액", "이자",
                      "원금상환", "중도상환", "잔액", "납입", "비고"]
-    sched_hcolors = ["17375E","17375E","2D6A4F","2D6A4F","1B6CA8",
-                     "1B6CA8","922B21","17375E","1B6CA8","4A5568"]
+    sched_hcolors = ["1A2B4A","1A2B4A","1E8449","1E8449","2471A3",
+                     "2471A3","C0392B","1A2B4A","2471A3","4A5568"]
     for ci, (h, hc) in enumerate(zip(sched_headers, sched_hcolors), start=1):
         c = ws.cell(row=SCHED_HDR_ROW, column=ci, value=h)
         c.fill = _fill(hc)
@@ -306,7 +306,7 @@ def build(wb):
     # ── 데이터 행 생성 ──────────────────────────────────────
     for i in range(LOAN_MONTHS):
         r = SCHED_START + i
-        fill_c = "FAFBFC" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F8FAFB" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 18
 
         # A: 회차
@@ -367,7 +367,7 @@ def build(wb):
 
         # G: 중도상환 (사용자 직접 입력, 기본 공백)
         gc = ws.cell(row=r, column=7, value=None)
-        gc.fill = _fill("F2FBF6")  # 연한 노랑 = 입력 유도
+        gc.fill = _fill("FFFFFF")  # 연한 노랑 = 입력 유도
         gc.alignment = _align()
         gc.border = _border()
         gc.number_format = '#,##0"원"'
@@ -420,7 +420,7 @@ def build(wb):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=1, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("17375E")
+    c.fill = _fill("1A2B4A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"A{row}:J{row}")

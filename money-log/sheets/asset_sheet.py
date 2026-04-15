@@ -7,7 +7,7 @@ from openpyxl.utils import get_column_letter
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 
 def _border():
     s = _side()
@@ -17,7 +17,7 @@ def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v)
@@ -41,7 +41,7 @@ ASSET_ITEMS = [
 
 # 월별 추이 테이블 컬럼 (B=월, C=부동산, D=계좌합계, E=주식, F=코인, G=퇴직금, H=대출잔액, I=순자산)
 TREND_HEADERS  = ["월", "부동산", "계좌합계", "주식", "코인", "퇴직금", "대출잔액", "순자산"]
-TREND_COLORS   = ["17375E", "1B6CA8", "2D6A4F", "1B6CA8", "1B6CA8", "1B6CA8", "922B21", "17375E"]
+TREND_COLORS   = ["1A2B4A", "2471A3", "1E8449", "2471A3", "2471A3", "2471A3", "C0392B", "1A2B4A"]
 
 
 def build(wb, year: int = 2026):
@@ -57,7 +57,7 @@ def build(wb, year: int = 2026):
 
     # ── 제목 ─────────────────────────────────────────────────
     title = ws.cell(row=1, column=2, value="자산 현황")
-    title.font = _font(bold=True, size=14, color="17375E")
+    title.font = Font(name="Calibri Light", bold=False, size=14, color="1A2B4A")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:I1")
     ws.row_dimensions[1].height = 30
@@ -71,7 +71,7 @@ def build(wb, year: int = 2026):
     # ── 스냅샷 헤더 ──────────────────────────────────────────
     header_row = 4
     for ci, (h, hc) in enumerate(zip(["항목", "금액", "비고"],
-                                     ["17375E", "2D6A4F", "17375E"]), start=2):
+                                     ["1A2B4A", "1E8449", "1A2B4A"]), start=2):
         c = ws.cell(row=header_row, column=ci, value=h)
         c.fill = _fill(hc)
         c.font = _font(bold=True, color="FFFFFF", size=10)
@@ -82,7 +82,7 @@ def build(wb, year: int = 2026):
     row = 5
     asset_rows, liability_rows = [], []
 
-    _sub_header(ws, row, "[ 자산 ]", "2D6A4F")
+    _sub_header(ws, row, "[ 자산 ]", "1E8449")
     row += 1
     for item, default, note_text, cat in ASSET_ITEMS:
         if cat != "asset":
@@ -91,7 +91,7 @@ def build(wb, year: int = 2026):
         c_amt  = ws.cell(row=row, column=3, value=default)
         c_note = ws.cell(row=row, column=4, value=note_text)
 
-        fill_c = "EAFAF1" if len(asset_rows) % 2 == 0 else "FFFFFF"
+        fill_c = "E8F8F0" if len(asset_rows) % 2 == 0 else "FFFFFF"
         for c in (c_item, c_amt, c_note):
             c.fill = _fill(fill_c)
             c.alignment = _align()
@@ -101,10 +101,10 @@ def build(wb, year: int = 2026):
         row += 1
 
     total_asset_row = row
-    _total_row(ws, row, asset_rows, "총 자산", "2D6A4F")
+    _total_row(ws, row, asset_rows, "총 자산", "1E8449")
     row += 2
 
-    _sub_header(ws, row, "[ 부채 ]", "922B21")
+    _sub_header(ws, row, "[ 부채 ]", "C0392B")
     row += 1
     for item, default, note_text, cat in ASSET_ITEMS:
         if cat != "liability":
@@ -113,7 +113,7 @@ def build(wb, year: int = 2026):
         c_amt  = ws.cell(row=row, column=3, value=default)
         c_note = ws.cell(row=row, column=4, value=note_text)
 
-        fill_c = "FEF5F5" if len(liability_rows) % 2 == 0 else "FFFFFF"
+        fill_c = "FDF2F2" if len(liability_rows) % 2 == 0 else "FFFFFF"
         for c in (c_item, c_amt, c_note):
             c.fill = _fill(fill_c)
             c.alignment = _align()
@@ -123,13 +123,13 @@ def build(wb, year: int = 2026):
         row += 1
 
     total_liability_row = row
-    _total_row(ws, row, liability_rows, "총 부채", "922B21")
+    _total_row(ws, row, liability_rows, "총 부채", "C0392B")
     row += 2
 
     # ── 순자산 ───────────────────────────────────────────────
     for ci in range(2, 5):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF", size=12)
         c.alignment = _align()
         c.border = _border()
@@ -175,7 +175,7 @@ def build(wb, year: int = 2026):
     # 1~12월 데이터 행
     trend_data_start = row
     for month in range(1, 13):
-        fill_c = "EBF5FF" if month % 2 == 0 else "FFFFFF"
+        fill_c = "F4F8FC" if month % 2 == 0 else "FFFFFF"
         ws.row_dimensions[row].height = 21
 
         # B: 월 라벨
@@ -209,8 +209,8 @@ def build(wb, year: int = 2026):
 
         # H: 대출잔액 (대출상환 시트 자동 참조)
         hc = ws.cell(row=row, column=8, value=loan_formula)
-        hc.fill = _fill("EBF5FF")   # 자동참조 셀은 연한 파랑으로 구분
-        hc.font = _font(color="17375E")
+        hc.fill = _fill("F4F8FC")   # 자동참조 셀은 연한 파랑으로 구분
+        hc.font = _font(color="1A2B4A")
         hc.alignment = _align()
         hc.border = _border()
         hc.number_format = '#,##0"원"'
@@ -218,8 +218,8 @@ def build(wb, year: int = 2026):
         # I: 순자산 = (부동산+계좌+주식+코인+퇴직금) - 대출잔액
         net_c = ws.cell(row=row, column=9,
                         value=f"=C{row}+D{row}+E{row}+F{row}+G{row}-H{row}")
-        net_c.fill = _fill("D6EAF8" if month % 2 == 0 else "EBF5FF")
-        net_c.font = _font(bold=True, color="17375E")
+        net_c.fill = _fill("D6EAF8" if month % 2 == 0 else "F4F8FC")
+        net_c.font = _font(bold=True, color="1A2B4A")
         net_c.alignment = _align()
         net_c.border = _border()
         net_c.number_format = '#,##0"원"'
@@ -241,16 +241,17 @@ def _add_trend_chart(ws, data_start, data_end, anchor_row):
     chart.title = "월별 순자산 추이"
     chart.y_axis.title = "순자산 (원)"
     chart.x_axis.title = "월"
-    chart.style = 10
+    chart.style = 2
     chart.width = 22
     chart.height = 12
+    chart.y_axis.majorGridlines = None
 
     # 순자산 (I열 = col 9)
     net_ref = Reference(ws, min_col=9, min_row=data_start, max_row=data_end)
     chart.add_data(net_ref, titles_from_data=False)
     chart.series[0].title = SeriesLabel(v="순자산")
-    chart.series[0].graphicalProperties.line.solidFill = "17375E"
-    chart.series[0].graphicalProperties.line.width = 25000  # 2pt
+    chart.series[0].graphicalProperties.line.solidFill = "2471A3"
+    chart.series[0].graphicalProperties.line.width = 28000  # 2.2pt
     chart.series[0].smooth = True
 
     # X축: 월 라벨 (B열 = col 2)
@@ -263,7 +264,7 @@ def _add_trend_chart(ws, data_start, data_end, anchor_row):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=2, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("17375E")
+    c.fill = _fill("1A2B4A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:I{row}")

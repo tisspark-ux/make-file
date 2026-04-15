@@ -14,7 +14,7 @@ DEVIATION_THRESHOLD = 0.20  # 20%
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 
 def _border():
     s = _side()
@@ -24,7 +24,7 @@ def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v)
@@ -56,7 +56,7 @@ def build(wb, year: int = 2026):
 
     # ── 제목 ─────────────────────────────────────────────────
     title = ws.cell(row=1, column=2, value=f'=설정!C3&"년 가계부 요약"')
-    title.font = _font(bold=True, size=16, color="17375E")
+    title.font = Font(name="Calibri Light", bold=False, size=18, color="1A2B4A")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:J1")
     ws.row_dimensions[1].height = 30
@@ -67,8 +67,8 @@ def build(wb, year: int = 2026):
 
     headers = ["월", "수입", "지출", "잔액", "예산", "예산대비",
                "수입편차", "지출편차", "비고 (이달 특이사항)"]
-    header_colors = ["17375E", "2D6A4F", "922B21", "17375E",
-                     "1B6CA8", "1B6CA8", "1B6CA8", "1B6CA8", "1B6CA8"]
+    header_colors = ["1A2B4A", "1E8449", "C0392B", "1A2B4A",
+                     "2471A3", "2471A3", "2471A3", "2471A3", "2471A3"]
     header_row = section_row + 1
     ws.row_dimensions[header_row].height = 22
     for ci, (h, hc) in enumerate(zip(headers, header_colors), start=2):
@@ -94,7 +94,7 @@ def build(wb, year: int = 2026):
         r = data_start + month - 1
         ws.row_dimensions[r].height = 21
         sheet_name = f"{month:02d}월"
-        fill_color = "EBF5FF" if month % 2 == 0 else "FFFFFF"
+        fill_color = "F4F8FC" if month % 2 == 0 else "FFFFFF"
 
         # B: 월
         c = ws.cell(row=r, column=2, value=f"{month}월")
@@ -160,7 +160,7 @@ def build(wb, year: int = 2026):
                 value=f"=SUM({col_l}{data_start}:{col_l}{total_r-1})").number_format = '#,##0'
     for ci in range(2, 11):
         c = ws.cell(row=total_r, column=ci)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -226,9 +226,10 @@ def _add_chart_with_avg(ws, data_start, anchor_row):
     bar.title = "월별 수입 / 지출  (점선: 연평균)"
     bar.y_axis.title = "금액 (원)"
     bar.x_axis.title = "월"
-    bar.style = 10
+    bar.style = 2
     bar.width = 22
     bar.height = 13
+    bar.y_axis.majorGridlines = None   # 수평 그리드라인 제거
 
     # 수입·지출 바 데이터
     income_ref  = Reference(ws, min_col=3, min_row=data_start, max_row=data_start + 11)
@@ -237,8 +238,8 @@ def _add_chart_with_avg(ws, data_start, anchor_row):
     bar.add_data(expense_ref, titles_from_data=False)
     bar.series[0].title = SeriesLabel(v="수입")
     bar.series[1].title = SeriesLabel(v="지출")
-    bar.series[0].graphicalProperties.solidFill = "2D6A4F"
-    bar.series[1].graphicalProperties.solidFill = "922B21"
+    bar.series[0].graphicalProperties.solidFill = "1E8449"
+    bar.series[1].graphicalProperties.solidFill = "C0392B"
 
     # 평균선 라인 차트 (K=수입평균, L=지출평균)
     line = LineChart()
@@ -250,7 +251,7 @@ def _add_chart_with_avg(ws, data_start, anchor_row):
     line.series[1].title = SeriesLabel(v="지출 평균")
 
     # 점선 스타일
-    for i, (color, dash) in enumerate([("2D6A4F", "dash"), ("922B21", "dash")]):
+    for i, (color, dash) in enumerate([("1E8449", "dash"), ("C0392B", "dash")]):
         line.series[i].graphicalProperties.line.solidFill = color
         line.series[i].graphicalProperties.line.dashDot = dash
         line.series[i].graphicalProperties.line.width = 20000  # 1.5pt
@@ -274,7 +275,7 @@ def _add_events_section(ws, data_start, anchor_row):
     _section_title(ws, anchor_row, "특이사항 목록  (비고 입력 시 자동 표시)")
 
     headers = ["월", "수입편차", "지출편차", "비고"]
-    header_colors = ["17375E", "1B6CA8", "1B6CA8", "1B6CA8"]
+    header_colors = ["1A2B4A", "2471A3", "2471A3", "2471A3"]
     hrow = anchor_row + 1
     ws.row_dimensions[hrow].height = 22
     for ci, (h, hc) in enumerate(zip(headers, header_colors), start=2):
@@ -319,7 +320,7 @@ def _add_unclassified_section(ws, anchor_row):
     hrow = anchor_row + 2
     ws.row_dimensions[hrow].height = 22
     headers = ["날짜", "대분류", "소분류", "내용", "금액"]
-    hcolors = ["17375E", "922B21", "922B21", "1B6CA8", "922B21"]
+    hcolors = ["1A2B4A", "C0392B", "C0392B", "2471A3", "C0392B"]
     for ci, (h, hc) in enumerate(zip(headers, hcolors), start=2):
         c = ws.cell(row=hrow, column=ci, value=h)
         c.fill = _fill(hc)
@@ -349,7 +350,7 @@ def _add_unclassified_section(ws, anchor_row):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=2, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("17375E")
+    c.fill = _fill("1A2B4A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:J{row}")

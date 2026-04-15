@@ -8,14 +8,14 @@ MAX_PAYMENT_METHODS = 30   # UNIQUE 스필 대비 사전 할당 행 수
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 def _border():
     s = _side()
     return Border(left=s, right=s, top=s, bottom=s)
 def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v, wrap_text=False)
 
@@ -34,7 +34,7 @@ def build(wb):
     # ── 제목 ─────────────────────────────────────────────────
     ws.row_dimensions[1].height = 28
     t = ws.cell(row=1, column=1, value='=설정!C3&"년 결제수단별 지출"')
-    t.font = _font(bold=True, size=14, color="17375E")
+    t.font = Font(name="Calibri Light", bold=False, size=14, color="1A2B4A")
     t.alignment = _align(h="left")
     ws.merge_cells("A1:N1")
 
@@ -52,7 +52,7 @@ def build(wb):
     headers = ["결제수단", "연간 합계"] + [f"{m}월" for m in range(1, 13)]
     for ci, h in enumerate(headers, start=1):
         c = ws.cell(row=header_row, column=ci, value=h)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
@@ -70,7 +70,7 @@ def build(wb):
     # ── B5~N{MAX}: SUMPRODUCT 사전 할당 ──────────────────────
     for i in range(MAX_PAYMENT_METHODS):
         r = data_start + i
-        fill_c = "EBF5FF" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F4F8FC" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 20
 
         # A열 스타일 (UNIQUE 스필 대상 행)
@@ -110,7 +110,7 @@ def build(wb):
     ws.row_dimensions[total_r].height = 22
     for ci in range(1, 15):
         c = ws.cell(row=total_r, column=ci)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()

@@ -5,7 +5,7 @@ from openpyxl.utils import get_column_letter
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 
 def _border():
     s = _side()
@@ -15,7 +15,7 @@ def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v, wrap_text=False)
@@ -42,7 +42,7 @@ def build(wb):
     # ── 안내 문구 ─────────────────────────────────────────────
     guide = ws.cell(row=1, column=1,
                     value="▶  뱅크샐러드 앱 → 내보내기 → '가계부 내역' 시트를 복사하여 3행부터 붙여넣기 하세요.")
-    guide.font = Font(bold=True, size=10, color="922B21")
+    guide.font = Font(bold=True, size=10, color="C0392B")
     guide.alignment = Alignment(horizontal="left", vertical="center")
     ws.merge_cells("A1:J1")
 
@@ -56,13 +56,13 @@ def build(wb):
     header_row = 3
     for ci, h in enumerate(HEADERS, start=1):
         c = ws.cell(row=header_row, column=ci, value=h)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
 
     # ── 데이터 영역 서식 (4행~1003행 미리 지정) ──────────────
-    date_fill_even = _fill("EBF5FF")
+    date_fill_even = _fill("F4F8FC")
     date_fill_odd  = _fill("FFFFFF")
     for r in range(4, 1004):
         fill = date_fill_even if r % 2 == 0 else date_fill_odd

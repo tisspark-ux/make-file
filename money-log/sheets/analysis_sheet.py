@@ -10,14 +10,14 @@ from .banksalad_sheet import DATA_LAST_ROW
 
 
 def _side():
-    return Side(style="thin", color="CCCCCC")
+    return Side(style="thin", color="E2E8F0")
 def _border():
     s = _side()
     return Border(left=s, right=s, top=s, bottom=s)
 def _fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
 def _font(bold=False, size=11, color="000000"):
-    return Font(bold=bold, size=size, color=color)
+    return Font(name="Calibri", bold=bold, size=size, color=color)
 def _align(h="center", v="center"):
     return Alignment(horizontal=h, vertical=v, wrap_text=False)
 
@@ -44,7 +44,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 30
     title = ws.cell(row=row, column=2,
                     value='=설정!C3&"년 카테고리별 지출 분석"')
-    title.font = _font(bold=True, size=16, color="17375E")
+    title.font = Font(name="Calibri Light", bold=False, size=16, color="1A2B4A")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:P1")
 
@@ -64,7 +64,7 @@ def build(wb, year: int = 2026):
     ann_header_row = row
     ws.row_dimensions[row].height = 22
     ann_headers = ["대분류", "중분류", "연간예산", "연간실제지출", "차액", "달성율"]
-    ann_colors  = ["17375E", "17375E", "2D6A4F", "922B21", "1B6CA8", "1B6CA8"]
+    ann_colors  = ["1A2B4A", "1A2B4A", "1E8449", "C0392B", "2471A3", "2471A3"]
     for ci, (h, hc) in enumerate(zip(ann_headers, ann_colors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -76,7 +76,7 @@ def build(wb, year: int = 2026):
     # 데이터 행
     ann_data_start = row
     for i, (main_cat, sub_cat, *_) in enumerate(BUDGET_ITEMS):
-        fill_c = "F8FAFC" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F8FAFB" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[row].height = 20
 
         for ci, val in [(2, main_cat), (3, sub_cat)]:
@@ -123,7 +123,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 22
     for ci in range(2, 8):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -159,7 +159,7 @@ def build(wb, year: int = 2026):
     hm_header_row = row
     ws.row_dimensions[row].height = 22
     hm_headers = ["대분류", "중분류"] + [f"{m}월" for m in range(1, 13)] + ["연간합계"]
-    hm_colors  = ["17375E", "17375E"] + ["2D6A4F"] * 12 + ["922B21"]
+    hm_colors  = ["1A2B4A", "1A2B4A"] + ["1E8449"] * 12 + ["C0392B"]
     for ci, (h, hc) in enumerate(zip(hm_headers, hm_colors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -176,7 +176,7 @@ def build(wb, year: int = 2026):
 
         for ci, val in [(2, main_cat), (3, sub_cat)]:
             c = ws.cell(row=row, column=ci, value=val)
-            c.fill = _fill("F8FAFC" if i % 2 == 0 else "FFFFFF")
+            c.fill = _fill("F8FAFB" if i % 2 == 0 else "FFFFFF")
             c.alignment = _align()
             c.border = _border()
 
@@ -209,7 +209,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 22
     for ci in range(2, 17):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("17375E")
+        c.fill = _fill("1A2B4A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -227,7 +227,7 @@ def build(wb, year: int = 2026):
         ColorScaleRule(
             start_type="num",   start_value=0,        start_color="FFFFFF",
             mid_type="percentile", mid_value=50,       mid_color="FFEB84",
-            end_type="percentile", end_value=100,      end_color="922B21"
+            end_type="percentile", end_value=100,      end_color="C0392B"
         )
     )
 
@@ -243,9 +243,10 @@ def _add_annual_chart(ws, header_row, data_start, data_end, anchor_row):
     bar.title = "카테고리별 연간 예산 vs 실제지출"
     bar.y_axis.title = "금액 (원)"
     bar.x_axis.title = "카테고리"
-    bar.style = 10
+    bar.style = 2
     bar.width = 26
     bar.height = 14
+    bar.y_axis.majorGridlines = None
 
     # 연간예산(D열=4), 연간실제(E열=5)
     budget_ref = Reference(ws, min_col=4, min_row=data_start, max_row=data_end)
@@ -254,8 +255,8 @@ def _add_annual_chart(ws, header_row, data_start, data_end, anchor_row):
     bar.add_data(actual_ref, titles_from_data=False)
     bar.series[0].title = SeriesLabel(v="연간예산")
     bar.series[1].title = SeriesLabel(v="연간실제지출")
-    bar.series[0].graphicalProperties.solidFill = "1B6CA8"
-    bar.series[1].graphicalProperties.solidFill = "922B21"
+    bar.series[0].graphicalProperties.solidFill = "2471A3"
+    bar.series[1].graphicalProperties.solidFill = "C0392B"
 
     # X축: 중분류(C열=3) 라벨
     cats = Reference(ws, min_col=3, min_row=data_start, max_row=data_end)
@@ -267,7 +268,7 @@ def _add_annual_chart(ws, header_row, data_start, data_end, anchor_row):
 def _section_title(ws, row, title, end_col=16):
     c = ws.cell(row=row, column=2, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("17375E")
+    c.fill = _fill("1A2B4A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:{get_column_letter(end_col)}{row}")
