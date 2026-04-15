@@ -34,7 +34,7 @@ def build(wb):
     # ── 제목 ─────────────────────────────────────────────────
     ws.row_dimensions[1].height = 28
     t = ws.cell(row=1, column=1, value='=설정!C3&"년 결제수단별 지출"')
-    t.font = _font(bold=True, size=14, color="3D5470")
+    t.font = _font(bold=True, size=14, color="17375E")
     t.alignment = _align(h="left")
     ws.merge_cells("A1:N1")
 
@@ -52,7 +52,7 @@ def build(wb):
     headers = ["결제수단", "연간 합계"] + [f"{m}월" for m in range(1, 13)]
     for ci, h in enumerate(headers, start=1):
         c = ws.cell(row=header_row, column=ci, value=h)
-        c.fill = _fill("3D5470")
+        c.fill = _fill("17375E")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
@@ -70,7 +70,7 @@ def build(wb):
     # ── B5~N{MAX}: SUMPRODUCT 사전 할당 ──────────────────────
     for i in range(MAX_PAYMENT_METHODS):
         r = data_start + i
-        fill_c = "F0F4F8" if i % 2 == 0 else "FFFFFF"
+        fill_c = "EBF5FF" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 20
 
         # A열 스타일 (UNIQUE 스필 대상 행)
@@ -110,7 +110,7 @@ def build(wb):
     ws.row_dimensions[total_r].height = 22
     for ci in range(1, 15):
         c = ws.cell(row=total_r, column=ci)
-        c.fill = _fill("3D5470")
+        c.fill = _fill("17375E")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
