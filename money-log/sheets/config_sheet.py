@@ -75,7 +75,7 @@ def build(wb, year: int = 2026):
         _label_cell(ws, i, 2, label)
         c = ws.cell(row=i, column=3, value=value)
         c.font = _font(bold=(i == 3), size=12 if i == 3 else 11,
-                       color="C00000" if i == 3 else "000000")
+                       color="B05050" if i == 3 else "000000")
         c.alignment = _align()
         c.border = _border()
         if note:
@@ -88,7 +88,7 @@ def build(wb, year: int = 2026):
     headers = ["뱅샐 대분류", "뱅샐 소분류", "가계부 대분류"]
     for ci, h in enumerate(headers, start=2):
         c = ws.cell(row=9, column=ci, value=h)
-        c.fill = _fill("1F4E79")
+        c.fill = _fill("2E5F8A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -96,7 +96,7 @@ def build(wb, year: int = 2026):
     for ri, (banksalad_main, banksalad_sub, budget_main) in enumerate(CATEGORY_MAP, start=10):
         sub_display = banksalad_sub if banksalad_sub != "*" else "(전체)"
         row_data = [banksalad_main, sub_display, budget_main]
-        fill_color = "EBF3FB" if ri % 2 == 0 else "FFFFFF"
+        fill_color = "EDF4FB" if ri % 2 == 0 else "FFFFFF"
         for ci, val in enumerate(row_data, start=2):
             c = ws.cell(row=ri, column=ci, value=val)
             c.fill = _fill(fill_color)
@@ -116,8 +116,8 @@ def build(wb, year: int = 2026):
 # ── 내부 헬퍼 ─────────────────────────────────────────────────
 def _section_title(ws, row, col, title):
     c = ws.cell(row=row, column=col, value=title)
-    c.font = _font(bold=True, size=12, color="1F4E79")
-    c.fill = _fill("D6E4F0")
+    c.font = _font(bold=True, size=12, color="2E5F8A")
+    c.fill = _fill("DAE8F4")
     c.alignment = _align(h="left")
     ws.merge_cells(f"{get_column_letter(col)}{row}:{get_column_letter(col+3)}{row}")
     c.border = _border()
@@ -125,6 +125,6 @@ def _section_title(ws, row, col, title):
 def _label_cell(ws, row, col, label):
     c = ws.cell(row=row, column=col, value=label)
     c.font = _font(bold=True, color="FFFFFF")
-    c.fill = _fill("2E75B6")
+    c.fill = _fill("3D6BA5")
     c.alignment = _align()
     c.border = _border()

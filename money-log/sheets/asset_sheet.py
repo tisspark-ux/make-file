@@ -41,10 +41,10 @@ ASSET_ITEMS = [
 
 # 월별 추이 테이블 컬럼 (B=월, C=부동산, D=계좌합계, E=주식, F=코인, G=퇴직금, H=대출잔액, I=순자산)
 TREND_HEADERS  = ["월", "부동산", "계좌합계", "주식", "코인", "퇴직금", "대출잔액", "순자산"]
-TREND_COLORS   = ["1F4E79", "4472C4", "375623", "7030A0", "FF8C00", "4472C4", "C00000", "1F4E79"]
+TREND_COLORS   = ["2E5F8A", "5B82BE", "4A7A5A", "7A5CA8", "C07A30", "5B82BE", "B05050", "2E5F8A"]
 
 
-def build(wb):
+def build(wb, year: int = 2026):
     ws = wb.create_sheet("자산현황")
     ws.sheet_view.showGridLines = False
 
@@ -57,7 +57,7 @@ def build(wb):
 
     # ── 제목 ─────────────────────────────────────────────────
     title = ws.cell(row=1, column=2, value="자산 현황")
-    title.font = _font(bold=True, size=14, color="1F4E79")
+    title.font = _font(bold=True, size=14, color="2E5F8A")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:I1")
     ws.row_dimensions[1].height = 30
@@ -71,7 +71,7 @@ def build(wb):
     # ── 스냅샷 헤더 ──────────────────────────────────────────
     header_row = 4
     for ci, (h, hc) in enumerate(zip(["항목", "금액", "비고"],
-                                     ["1F4E79", "375623", "1F4E79"]), start=2):
+                                     ["2E5F8A", "4A7A5A", "2E5F8A"]), start=2):
         c = ws.cell(row=header_row, column=ci, value=h)
         c.fill = _fill(hc)
         c.font = _font(bold=True, color="FFFFFF", size=10)
@@ -82,7 +82,7 @@ def build(wb):
     row = 5
     asset_rows, liability_rows = [], []
 
-    _sub_header(ws, row, "[ 자산 ]", "375623")
+    _sub_header(ws, row, "[ 자산 ]", "4A7A5A")
     row += 1
     for item, default, note_text, cat in ASSET_ITEMS:
         if cat != "asset":
@@ -91,7 +91,7 @@ def build(wb):
         c_amt  = ws.cell(row=row, column=3, value=default)
         c_note = ws.cell(row=row, column=4, value=note_text)
 
-        fill_c = "E2EFDA" if len(asset_rows) % 2 == 0 else "FFFFFF"
+        fill_c = "E8F2E8" if len(asset_rows) % 2 == 0 else "FFFFFF"
         for c in (c_item, c_amt, c_note):
             c.fill = _fill(fill_c)
             c.alignment = _align()
@@ -101,10 +101,10 @@ def build(wb):
         row += 1
 
     total_asset_row = row
-    _total_row(ws, row, asset_rows, "총 자산", "375623")
+    _total_row(ws, row, asset_rows, "총 자산", "4A7A5A")
     row += 2
 
-    _sub_header(ws, row, "[ 부채 ]", "C00000")
+    _sub_header(ws, row, "[ 부채 ]", "B05050")
     row += 1
     for item, default, note_text, cat in ASSET_ITEMS:
         if cat != "liability":
@@ -113,7 +113,7 @@ def build(wb):
         c_amt  = ws.cell(row=row, column=3, value=default)
         c_note = ws.cell(row=row, column=4, value=note_text)
 
-        fill_c = "FCE4D6" if len(liability_rows) % 2 == 0 else "FFFFFF"
+        fill_c = "F5E8E0" if len(liability_rows) % 2 == 0 else "FFFFFF"
         for c in (c_item, c_amt, c_note):
             c.fill = _fill(fill_c)
             c.alignment = _align()
@@ -123,13 +123,13 @@ def build(wb):
         row += 1
 
     total_liability_row = row
-    _total_row(ws, row, liability_rows, "총 부채", "C00000")
+    _total_row(ws, row, liability_rows, "총 부채", "B05050")
     row += 2
 
     # ── 순자산 ───────────────────────────────────────────────
     for ci in range(2, 5):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("1F4E79")
+        c.fill = _fill("2E5F8A")
         c.font = _font(bold=True, color="FFFFFF", size=12)
         c.alignment = _align()
         c.border = _border()
@@ -147,7 +147,7 @@ def build(wb):
     row += 1
 
     hint = ws.cell(row=row, column=2,
-                   value="※ 부동산·계좌합계·주식·코인·퇴직금·대출잔액을 매월 직접 입력하세요. 순자산은 자동 계산됩니다.")
+                   value="※ 부동산·계좌합계·주식·코인·퇴직금은 매월 직접 입력하세요. 대출잔액은 대출상환 시트에서 자동 참조됩니다.")
     hint.font = Font(size=9, color="888888", italic=True)
     hint.alignment = _align(h="left")
     ws.merge_cells(f"B{row}:I{row}")
@@ -165,6 +165,13 @@ def build(wb):
     ws.row_dimensions[row].height = 22
     row += 1
 
+    # 대출상환 스케줄 연계 상수
+    # 대출 실행: 2026-03-30 / 첫 납입: 2026-04-30 (회차1 = 대출상환!H67)
+    _LOAN_ISSUE_YEAR  = 2026
+    _LOAN_ISSUE_MONTH = 3     # 3월: 대출 실행, 잔액 = 원금
+    _LOAN_PAY_MONTH   = 4     # 4월: 첫 납입 (회차 1)
+    _LOAN_SCHED_START = 67    # 대출상환 시트 스케줄 데이터 시작 행
+
     # 1~12월 데이터 행
     trend_data_start = row
     for month in range(1, 13):
@@ -178,19 +185,41 @@ def build(wb):
         c.alignment = _align()
         c.border = _border()
 
-        # C~H: 수동 입력 (부동산, 계좌합계, 주식, 코인, 퇴직금, 대출잔액)
-        for ci in range(3, 9):
+        # 대출잔액 수식 계산 (H열 = col 8)
+        # months_offset: 0 = 첫 납입(2026-04), 음수 = 이전, 양수 = 이후
+        months_offset = (year - _LOAN_ISSUE_YEAR) * 12 + (month - _LOAN_PAY_MONTH)
+        if months_offset < -1:
+            # 대출 실행 전: 0
+            loan_formula = 0
+        elif months_offset == -1:
+            # 대출 실행 월(2026-03): 원금 전액
+            loan_formula = "='대출상환'!$C$5"
+        else:
+            # 첫 납입 이후: 해당 회차 잔액 참조
+            sched_row = _LOAN_SCHED_START + months_offset
+            loan_formula = f"=IFERROR('대출상환'!$H${sched_row},0)"
+
+        # C~G: 수동 입력 (부동산, 계좌합계, 주식, 코인, 퇴직금)
+        for ci in range(3, 8):
             c = ws.cell(row=row, column=ci, value=0)
             c.fill = _fill(fill_c)
             c.alignment = _align()
             c.border = _border()
             c.number_format = '#,##0"원"'
 
+        # H: 대출잔액 (대출상환 시트 자동 참조)
+        hc = ws.cell(row=row, column=8, value=loan_formula)
+        hc.fill = _fill("EDF4FB")   # 자동참조 셀은 연한 파랑으로 구분
+        hc.font = _font(color="2E5F8A")
+        hc.alignment = _align()
+        hc.border = _border()
+        hc.number_format = '#,##0"원"'
+
         # I: 순자산 = (부동산+계좌+주식+코인+퇴직금) - 대출잔액
         net_c = ws.cell(row=row, column=9,
                         value=f"=C{row}+D{row}+E{row}+F{row}+G{row}-H{row}")
-        net_c.fill = _fill("D6E4F0" if month % 2 == 0 else "EBF3FB")
-        net_c.font = _font(bold=True, color="1F4E79")
+        net_c.fill = _fill("DAE8F4" if month % 2 == 0 else "EDF4FB")
+        net_c.font = _font(bold=True, color="2E5F8A")
         net_c.alignment = _align()
         net_c.border = _border()
         net_c.number_format = '#,##0"원"'
@@ -220,7 +249,7 @@ def _add_trend_chart(ws, data_start, data_end, anchor_row):
     net_ref = Reference(ws, min_col=9, min_row=data_start, max_row=data_end)
     chart.add_data(net_ref, titles_from_data=False)
     chart.series[0].title = SeriesLabel(v="순자산")
-    chart.series[0].graphicalProperties.line.solidFill = "1F4E79"
+    chart.series[0].graphicalProperties.line.solidFill = "2E5F8A"
     chart.series[0].graphicalProperties.line.width = 25000  # 2pt
     chart.series[0].smooth = True
 
@@ -234,7 +263,7 @@ def _add_trend_chart(ws, data_start, data_end, anchor_row):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=2, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("1F4E79")
+    c.fill = _fill("2E5F8A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:I{row}")
@@ -261,10 +290,10 @@ def _total_row(ws, row, data_rows, label, color):
     c_total = ws.cell(row=row, column=3, value=f"={row_refs}")
     c_total.number_format = '#,##0"원"'
     c_total.font = _font(bold=True)
-    c_total.fill = _fill("D6E4F0")
+    c_total.fill = _fill("DAE8F4")
     c_total.alignment = _align()
     c_total.border = _border()
 
     c_note = ws.cell(row=row, column=4, value="")
-    c_note.fill = _fill("D6E4F0")
+    c_note.fill = _fill("DAE8F4")
     c_note.border = _border()

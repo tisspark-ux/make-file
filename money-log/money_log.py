@@ -24,7 +24,7 @@ def create(year: int = 2026, output_path: str = None) -> str:
     dashboard_sheet.build(wb)          # 3: 대시보드  (파일 열 때 이 탭)
     summary_sheet.build(wb, year)      # 4: 요약
     monthly_sheet.build_all(wb, year)  # 5~16: 01~12월
-    asset_sheet.build(wb)              # 17: 자산현황
+    asset_sheet.build(wb, year)        # 17: 자산현황
     payment_sheet.build(wb)            # 18: 결제수단
     analysis_sheet.build(wb, year)     # 19: 분석
     loan_sheet.build(wb)               # 20: 대출상환

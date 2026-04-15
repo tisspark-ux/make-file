@@ -90,7 +90,7 @@ def build(wb):
     # ════════════════════════════════════════════════════════
     ws.row_dimensions[row].height = 32
     t = ws.cell(row=row, column=1, value="대출 상환 추적표")
-    t.font = _font(bold=True, size=16, color="1F4E79")
+    t.font = _font(bold=True, size=16, color="2E5F8A")
     t.alignment = _align(h="left")
     ws.merge_cells("A1:J1")
 
@@ -117,14 +117,14 @@ def build(wb):
     for r, label, val, fmt, note in info_rows:
         ws.row_dimensions[r].height = 22
         lc = ws.cell(row=r, column=1, value=label)
-        lc.fill = _fill("2E75B6")
+        lc.fill = _fill("3D6BA5")
         lc.font = _font(bold=True, color="FFFFFF", size=10)
         lc.alignment = _align(h="left")
         lc.border = _border()
         ws.merge_cells(f"A{r}:B{r}")
 
         vc = ws.cell(row=r, column=3, value=val)
-        vc.fill = _fill("EBF3FB")
+        vc.fill = _fill("EDF4FB")
         vc.font = _font(bold=True, size=11)
         vc.alignment = _align()
         vc.border = _border()
@@ -155,7 +155,7 @@ def build(wb):
     # 금리 테이블 헤더
     ws.row_dimensions[RATE_HDR_ROW].height = 22
     rate_headers = ["변동일", "총금리 (%)", "비고 (기준금리·변동 사유 등)"]
-    rate_hcolors = ["1F4E79", "375623", "1F4E79"]
+    rate_hcolors = ["2E5F8A", "4A7A5A", "2E5F8A"]
     rate_spans   = ["A", "B", "C:J"]  # 열 병합 범위
     for (col_start, span_end), h, hc in zip(
             [("A","A"),("B","B"),("C","J")], rate_headers, rate_hcolors):
@@ -171,7 +171,7 @@ def build(wb):
     for i in range(RATE_DATA_END - RATE_DATA_START + 1):
         r = RATE_DATA_START + i
         ws.row_dimensions[r].height = 20
-        fill_c = "E2EFDA" if i == 0 else ("F9F9F9" if i % 2 == 0 else "FFFFFF")
+        fill_c = "E8F2E8" if i == 0 else ("F9F9F9" if i % 2 == 0 else "FFFFFF")
 
         # 날짜 열
         date_cell = ws.cell(row=r, column=1,
@@ -243,7 +243,7 @@ def build(wb):
 
         # 레이블1
         lc1 = ws.cell(row=r, column=1, value=l1)
-        lc1.fill = _fill("1F4E79")
+        lc1.fill = _fill("2E5F8A")
         lc1.font = _font(bold=True, color="FFFFFF", size=10)
         lc1.alignment = _align()
         lc1.border = _border()
@@ -251,7 +251,7 @@ def build(wb):
 
         # 값1
         vc1 = ws.cell(row=r, column=3, value=f1)
-        vc1.fill = _fill("D6E4F0")
+        vc1.fill = _fill("DAE8F4")
         vc1.font = _font(bold=True, size=12)
         vc1.alignment = _align()
         vc1.border = _border()
@@ -260,7 +260,7 @@ def build(wb):
 
         # 레이블2
         lc2 = ws.cell(row=r, column=5, value=l2)
-        lc2.fill = _fill("375623")
+        lc2.fill = _fill("4A7A5A")
         lc2.font = _font(bold=True, color="FFFFFF", size=10)
         lc2.alignment = _align()
         lc2.border = _border()
@@ -268,7 +268,7 @@ def build(wb):
 
         # 값2
         vc2 = ws.cell(row=r, column=7, value=f2)
-        vc2.fill = _fill("E2EFDA")
+        vc2.fill = _fill("E8F2E8")
         vc2.font = _font(bold=True, size=12)
         vc2.alignment = _align()
         vc2.border = _border()
@@ -294,8 +294,8 @@ def build(wb):
     ws.row_dimensions[SCHED_HDR_ROW].height = 22
     sched_headers = ["회차", "납입일", "적용금리", "월납입액", "이자",
                      "원금상환", "중도상환", "잔액", "납입", "비고"]
-    sched_hcolors = ["1F4E79","1F4E79","375623","375623","4472C4",
-                     "4472C4","C00000","1F4E79","7030A0","404040"]
+    sched_hcolors = ["2E5F8A","2E5F8A","4A7A5A","4A7A5A","5B82BE",
+                     "5B82BE","B05050","2E5F8A","7A5CA8","525255"]
     for ci, (h, hc) in enumerate(zip(sched_headers, sched_hcolors), start=1):
         c = ws.cell(row=SCHED_HDR_ROW, column=ci, value=h)
         c.fill = _fill(hc)
@@ -367,7 +367,7 @@ def build(wb):
 
         # G: 중도상환 (사용자 직접 입력, 기본 공백)
         gc = ws.cell(row=r, column=7, value=None)
-        gc.fill = _fill("FFF9E6")  # 연한 노랑 = 입력 유도
+        gc.fill = _fill("FEFAEE")  # 연한 노랑 = 입력 유도
         gc.alignment = _align()
         gc.border = _border()
         gc.number_format = '#,##0"원"'
@@ -420,7 +420,7 @@ def build(wb):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=1, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("1F4E79")
+    c.fill = _fill("2E5F8A")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"A{row}:J{row}")

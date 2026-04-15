@@ -48,7 +48,7 @@ def build(wb):
     ws.row_dimensions[row].height = 32
     title = ws.cell(row=row, column=2,
                     value='=TEXT(TODAY(),"YYYY년 MM월")&" 가계부 현황"')
-    title.font = _font(bold=True, size=16, color="1F4E79")
+    title.font = _font(bold=True, size=16, color="2E5F8A")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:G1")
 
@@ -77,15 +77,15 @@ def build(wb):
     row = 5
     ws.row_dimensions[row].height = 30
     summary_vals = [
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!B2"),0)', "375623", '#,##0"원"'),
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2"),0)', "C00000", '#,##0"원"'),
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!F2"),0)', "1F4E79", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!B2"),0)', "4A7A5A", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2"),0)', "B05050", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!F2"),0)', "2E5F8A", '#,##0"원"'),
         (f'=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!E{_MONTHLY_DATA_START + len(BUDGET_ITEMS)}"),0)',
-         "7030A0", '#,##0"원"'),
+         "7A5CA8", '#,##0"원"'),
         (f'=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2")/INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!E{_MONTHLY_DATA_START + len(BUDGET_ITEMS)}"),0)',
-         "4472C4", '0%'),
+         "5B82BE", '0%'),
         ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2")/(DAY(TODAY())),0)',
-         "404040", '#,##0"원"'),
+         "525255", '#,##0"원"'),
     ]
     for ci, (val, color, fmt) in enumerate(summary_vals, start=2):
         c = ws.cell(row=row, column=ci, value=val)
@@ -100,7 +100,7 @@ def build(wb):
     # ── 예산 vs 실제 테이블 ──────────────────────────────────
     ws.row_dimensions[row].height = 22
     headers = ["카테고리", "세부항목", "예산", "실제지출", "차액", "달성율"]
-    hcolors = ["1F4E79", "1F4E79", "375623", "C00000", "7030A0", "7030A0"]
+    hcolors = ["2E5F8A", "2E5F8A", "4A7A5A", "B05050", "7A5CA8", "7A5CA8"]
     for ci, (h, hc) in enumerate(zip(headers, hcolors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -151,7 +151,7 @@ def build(wb):
     ws.row_dimensions[total_r].height = 22
     for ci in range(2, 8):
         c = ws.cell(row=total_r, column=ci)
-        c.fill = _fill("1F4E79")
+        c.fill = _fill("2E5F8A")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -175,7 +175,7 @@ def build(wb):
         f"G{data_start}:G{total_r - 1}",
         DataBarRule(start_type="num", start_value=0,
                     end_type="num", end_value=1,
-                    color="4472C4")
+                    color="5B82BE")
     )
 
     ws.freeze_panes = "B8"
