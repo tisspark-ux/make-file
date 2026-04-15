@@ -62,13 +62,13 @@ def _build_month(wb, year: int, month: int):
     # ── 제목 ─────────────────────────────────────────────────
     title = ws.cell(row=1, column=1,
                     value=f'=TEXT(DATE(설정!C3,{month},1),"YYYY년 MM월 가계부")')
-    title.font = Font(name="Calibri Light", bold=False, size=14, color="1A2B4A")
+    title.font = Font(name="Calibri Light", bold=False, size=14, color="1E293B")
     title.alignment = _align(h="left")
     ws.merge_cells("A1:J1")
 
     # ── 요약 바 (수입 / 지출 / 잔액) ─────────────────────────
     summary_labels = ["이번달 수입", "이번달 지출", "잔액"]
-    summary_colors = ["1E8449", "C0392B", "1A2B4A"]
+    summary_colors = ["16A34A", "DC2626", "1E293B"]
     for i, (label, color) in enumerate(zip(summary_labels, summary_colors)):
         col = i * 2 + 1
         lc = ws.cell(row=2, column=col, value=label)
@@ -78,7 +78,7 @@ def _build_month(wb, year: int, month: int):
         lc.border = _border()
 
         vc = ws.cell(row=2, column=col + 1)
-        vc.fill = _fill("F8FAFB")
+        vc.fill = _fill("F8FAFC")
         vc.font = _font(bold=True, size=11)
         vc.alignment = _align()
         vc.border = _border()
@@ -87,7 +87,7 @@ def _build_month(wb, year: int, month: int):
     # I7, J7 빈 셀 스타일
     for ci in (9, 10):
         c = ws.cell(row=2, column=ci)
-        c.fill = _fill("F8FAFB")
+        c.fill = _fill("F8FAFC")
         c.border = _border()
 
     # 수입/지출/잔액 수식
@@ -106,8 +106,8 @@ def _build_month(wb, year: int, month: int):
     budget_headers = ["대분류", "중분류", "예산기본", "예산추가", "예산합계",
                       "실제지출", "차액", "달성율", "전월지출", "전월대비"]
     header_row = 4
-    header_colors = (["1A2B4A"] * 2 + ["1E8449"] * 3 +
-                     ["C0392B"] + ["2471A3"] * 2 + ["2471A3"] * 2)
+    header_colors = (["1E293B"] * 2 + ["16A34A"] * 3 +
+                     ["DC2626"] + ["2563EB"] * 2 + ["2563EB"] * 2)
     for ci, (h, hc) in enumerate(zip(budget_headers, header_colors), start=1):
         c = ws.cell(row=header_row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -120,7 +120,7 @@ def _build_month(wb, year: int, month: int):
     data_start = 5
     for i, (main_cat, sub_cat, *_) in enumerate(BUDGET_ITEMS):
         r = data_start + i
-        fill_color = "F8FAFB" if i % 2 == 0 else "FFFFFF"
+        fill_color = "F8FAFC" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 20
 
         for ci, val in [(COL_MAIN, main_cat), (COL_SUB, sub_cat)]:
@@ -177,7 +177,7 @@ def _build_month(wb, year: int, month: int):
     ws.row_dimensions[total_row].height = 22
     for ci in range(1, COL_PREV_DIFF + 1):
         c = ws.cell(row=total_row, column=ci)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -194,7 +194,7 @@ def _build_month(wb, year: int, month: int):
 
     # ── ① 과소비 조건부 서식 ─────────────────────────────────
     # 예산 초과 시 (실제지출 > 예산합계) → 행 전체 연한 빨강
-    over_fill = PatternFill(start_color="FFD0D0", end_color="FFD0D0", fill_type="solid")
+    over_fill = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
     ws.conditional_formatting.add(
         f"A{data_start}:J{total_row - 1}",
         FormulaRule(formula=[f"=$F{data_start}>$E{data_start}"], fill=over_fill)
@@ -208,7 +208,7 @@ def _build_month(wb, year: int, month: int):
     for ci, (h, w) in enumerate(zip(DETAIL_COLS, detail_col_widths), start=1):
         ws.column_dimensions[get_column_letter(ci)].width = w
         c = ws.cell(row=detail_start, column=ci, value=h)
-        c.fill = _fill("4A5568")
+        c.fill = _fill("475569")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()

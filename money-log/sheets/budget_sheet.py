@@ -90,7 +90,7 @@ def build(wb, year: int = 2026):
                       "JM 금액", "주기", "대상월", "", "월수입(Tiss)", "월수입(JM)", "월수입(합계)", "연수입(합계)"]
     for ci, h in enumerate(income_headers, start=2):
         c = ws.cell(row=row, column=ci, value=h)
-        c.fill = _fill("2471A3")
+        c.fill = _fill("2563EB")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
@@ -140,7 +140,7 @@ def build(wb, year: int = 2026):
                       "주기", "합계(월)", "납부월", "비고"]
     for ci, h in enumerate(budget_headers, start=2):
         c = ws.cell(row=row, column=ci, value=h)
-        c.fill = _fill("1E8449")
+        c.fill = _fill("16A34A")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
@@ -148,7 +148,7 @@ def build(wb, year: int = 2026):
 
     budget_data_start = row
     for i, (main_cat, sub_cat, common, tiss, jm, cycle, pay_month, note) in enumerate(BUDGET_ITEMS):
-        fill_color = "E8F8F0" if i % 2 == 0 else "FFFFFF"
+        fill_color = "F0FDF4" if i % 2 == 0 else "FFFFFF"
         vals = [main_cat, sub_cat, common or "", tiss or "", jm or "",
                 cycle, "", pay_month, note]
         for ci, val in enumerate(vals, start=2):
@@ -176,7 +176,7 @@ def build(wb, year: int = 2026):
     순수입_row = row
     c = ws.cell(row=row, column=2, value="월 순수입 (수입-지출)")
     c.font = _font(bold=True, color="FFFFFF")
-    c.fill = _fill("C0392B")
+    c.fill = _fill("DC2626")
     c.alignment = _align()
     c.border = _border()
     ws.merge_cells(f"B{row}:G{row}")
@@ -184,7 +184,7 @@ def build(wb, year: int = 2026):
                  value=f"=K{income_total_row}-H{budget_total_row}")
     c2.number_format = '#,##0.0"만"'
     c2.font = _font(bold=True)
-    c2.fill = _fill("FDF2F2")
+    c2.fill = _fill("FEF2F2")
     c2.alignment = _align()
     c2.border = _border()
     row += 3
@@ -198,7 +198,7 @@ def build(wb, year: int = 2026):
     savings_headers = ["항목", "금액(만원)", "비고"]
     for ci, h in enumerate(savings_headers, start=2):
         c = ws.cell(row=row, column=ci, value=h)
-        c.fill = _fill("4A5568")
+        c.fill = _fill("475569")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()
@@ -221,7 +221,7 @@ def build(wb, year: int = 2026):
     # 저축 합계 행
     for ci in range(2, 12):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("4A5568")
+        c.fill = _fill("475569")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -240,7 +240,7 @@ def build(wb, year: int = 2026):
     # 월 순잉여금 (순수입 - 저축)
     c = ws.cell(row=row, column=2, value="월 순잉여금 (저축 후 남는 돈)")
     c.font = _font(bold=True, color="FFFFFF")
-    c.fill = _fill("1A2B4A")
+    c.fill = _fill("1E293B")
     c.alignment = _align()
     c.border = _border()
     ws.merge_cells(f"B{row}:G{row}")
@@ -248,7 +248,7 @@ def build(wb, year: int = 2026):
                  value=f"=H{순수입_row}-D{savings_total_row}")
     c2.number_format = '#,##0.0"만"'
     c2.font = _font(bold=True)
-    c2.fill = _fill("D6EAF8")
+    c2.fill = _fill("DBEAFE")
     c2.alignment = _align()
     c2.border = _border()
 
@@ -259,7 +259,7 @@ def build(wb, year: int = 2026):
 def _section_header(ws, row, title, year):
     c = ws.cell(row=row, column=2, value=f"[ {title} ]  {year}년  (단위: 만원)")
     c.font = _font(bold=True, size=13, color="FFFFFF")
-    c.fill = _fill("1A2B4A")
+    c.fill = _fill("1E293B")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:N{row}")
@@ -270,7 +270,7 @@ def _section_header(ws, row, title, year):
 def _total_row(ws, row, start, end, sum_cols, label):
     c = ws.cell(row=row, column=2, value=label)
     c.font = _font(bold=True, color="FFFFFF")
-    c.fill = _fill("1A2B4A")
+    c.fill = _fill("1E293B")
     c.alignment = _align()
     c.border = _border()
     ws.merge_cells(f"B{row}:C{row}")
@@ -280,9 +280,9 @@ def _total_row(ws, row, start, end, sum_cols, label):
                            value=f"=SUM({get_column_letter(ci)}{start}:{get_column_letter(ci)}{end})")
             cell.number_format = '#,##0.0"만"'
             cell.font = _font(bold=True)
-            cell.fill = _fill("D6EAF8")
+            cell.fill = _fill("DBEAFE")
         else:
             cell = ws.cell(row=row, column=ci, value="")
-            cell.fill = _fill("D6EAF8")
+            cell.fill = _fill("DBEAFE")
         cell.alignment = _align()
         cell.border = _border()

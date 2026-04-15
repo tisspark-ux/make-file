@@ -42,7 +42,7 @@ def build(wb):
     # ── 안내 문구 ─────────────────────────────────────────────
     guide = ws.cell(row=1, column=1,
                     value="▶  뱅크샐러드 앱 → 내보내기 → '가계부 내역' 시트를 복사하여 3행부터 붙여넣기 하세요.")
-    guide.font = Font(bold=True, size=10, color="C0392B")
+    guide.font = Font(bold=True, size=10, color="DC2626")
     guide.alignment = Alignment(horizontal="left", vertical="center")
     ws.merge_cells("A1:J1")
 
@@ -56,7 +56,7 @@ def build(wb):
     header_row = 3
     for ci, h in enumerate(HEADERS, start=1):
         c = ws.cell(row=header_row, column=ci, value=h)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF", size=10)
         c.alignment = _align()
         c.border = _border()

@@ -48,7 +48,7 @@ def build(wb):
     ws.row_dimensions[row].height = 32
     title = ws.cell(row=row, column=2,
                     value='=TEXT(TODAY(),"YYYY년 MM월")&" 가계부 현황"')
-    title.font = Font(name="Calibri Light", bold=False, size=16, color="1A2B4A")
+    title.font = Font(name="Calibri Light", bold=False, size=16, color="1E293B")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:G1")
 
@@ -77,15 +77,15 @@ def build(wb):
     row = 5
     ws.row_dimensions[row].height = 30
     summary_vals = [
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!B2"),0)', "1E8449", '#,##0"원"'),
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2"),0)', "C0392B", '#,##0"원"'),
-        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!F2"),0)', "1A2B4A", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!B2"),0)', "16A34A", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2"),0)', "DC2626", '#,##0"원"'),
+        ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!F2"),0)', "1E293B", '#,##0"원"'),
         (f'=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!E{_MONTHLY_DATA_START + len(BUDGET_ITEMS)}"),0)',
-         "2471A3", '#,##0"원"'),
+         "2563EB", '#,##0"원"'),
         (f'=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2")/INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!E{_MONTHLY_DATA_START + len(BUDGET_ITEMS)}"),0)',
-         "2471A3", '0%'),
+         "2563EB", '0%'),
         ('=IFERROR(INDIRECT("\'"\u0026TEXT(MONTH(TODAY()),"00")\u0026"월!D2")/(DAY(TODAY())),0)',
-         "4A5568", '#,##0"원"'),
+         "475569", '#,##0"원"'),
     ]
     for ci, (val, color, fmt) in enumerate(summary_vals, start=2):
         c = ws.cell(row=row, column=ci, value=val)
@@ -100,7 +100,7 @@ def build(wb):
     # ── 예산 vs 실제 테이블 ──────────────────────────────────
     ws.row_dimensions[row].height = 22
     headers = ["카테고리", "세부항목", "예산", "실제지출", "차액", "달성율"]
-    hcolors = ["1A2B4A", "1A2B4A", "1E8449", "C0392B", "2471A3", "2471A3"]
+    hcolors = ["1E293B", "1E293B", "16A34A", "DC2626", "2563EB", "2563EB"]
     for ci, (h, hc) in enumerate(zip(headers, hcolors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -113,7 +113,7 @@ def build(wb):
     for i, (main_cat, sub_cat, *_) in enumerate(BUDGET_ITEMS):
         r = row + i
         monthly_row = _MONTHLY_DATA_START + i
-        fill_c = "F8FAFB" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F8FAFC" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 20
 
         # 카테고리 / 세부항목
@@ -151,7 +151,7 @@ def build(wb):
     ws.row_dimensions[total_r].height = 22
     for ci in range(2, 8):
         c = ws.cell(row=total_r, column=ci)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -164,7 +164,7 @@ def build(wb):
             value=f"=IFERROR(E{total_r}/D{total_r},0)").number_format = '0%'
 
     # ── ① 과소비 조건부 서식 (달성율 > 100%) ─────────────────
-    over_fill = PatternFill(start_color="FFD0D0", end_color="FFD0D0", fill_type="solid")
+    over_fill = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
     ws.conditional_formatting.add(
         f"B{data_start}:G{total_r - 1}",
         FormulaRule(formula=[f"=$E{data_start}>$D{data_start}"], fill=over_fill)
@@ -175,7 +175,7 @@ def build(wb):
         f"G{data_start}:G{total_r - 1}",
         DataBarRule(start_type="num", start_value=0,
                     end_type="num", end_value=1,
-                    color="2471A3")
+                    color="2563EB")
     )
 
     ws.freeze_panes = "B8"

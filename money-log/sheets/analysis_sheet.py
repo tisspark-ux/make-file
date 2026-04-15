@@ -44,7 +44,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 30
     title = ws.cell(row=row, column=2,
                     value='=설정!C3&"년 카테고리별 지출 분석"')
-    title.font = Font(name="Calibri Light", bold=False, size=16, color="1A2B4A")
+    title.font = Font(name="Calibri Light", bold=False, size=16, color="1E293B")
     title.alignment = _align(h="left")
     ws.merge_cells("B1:P1")
 
@@ -64,7 +64,7 @@ def build(wb, year: int = 2026):
     ann_header_row = row
     ws.row_dimensions[row].height = 22
     ann_headers = ["대분류", "중분류", "연간예산", "연간실제지출", "차액", "달성율"]
-    ann_colors  = ["1A2B4A", "1A2B4A", "1E8449", "C0392B", "2471A3", "2471A3"]
+    ann_colors  = ["1E293B", "1E293B", "16A34A", "DC2626", "2563EB", "2563EB"]
     for ci, (h, hc) in enumerate(zip(ann_headers, ann_colors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -76,7 +76,7 @@ def build(wb, year: int = 2026):
     # 데이터 행
     ann_data_start = row
     for i, (main_cat, sub_cat, *_) in enumerate(BUDGET_ITEMS):
-        fill_c = "F8FAFB" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F8FAFC" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[row].height = 20
 
         for ci, val in [(2, main_cat), (3, sub_cat)]:
@@ -123,7 +123,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 22
     for ci in range(2, 8):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -159,7 +159,7 @@ def build(wb, year: int = 2026):
     hm_header_row = row
     ws.row_dimensions[row].height = 22
     hm_headers = ["대분류", "중분류"] + [f"{m}월" for m in range(1, 13)] + ["연간합계"]
-    hm_colors  = ["1A2B4A", "1A2B4A"] + ["1E8449"] * 12 + ["C0392B"]
+    hm_colors  = ["1E293B", "1E293B"] + ["16A34A"] * 12 + ["DC2626"]
     for ci, (h, hc) in enumerate(zip(hm_headers, hm_colors), start=2):
         c = ws.cell(row=row, column=ci, value=h)
         c.fill = _fill(hc)
@@ -176,7 +176,7 @@ def build(wb, year: int = 2026):
 
         for ci, val in [(2, main_cat), (3, sub_cat)]:
             c = ws.cell(row=row, column=ci, value=val)
-            c.fill = _fill("F8FAFB" if i % 2 == 0 else "FFFFFF")
+            c.fill = _fill("F8FAFC" if i % 2 == 0 else "FFFFFF")
             c.alignment = _align()
             c.border = _border()
 
@@ -209,7 +209,7 @@ def build(wb, year: int = 2026):
     ws.row_dimensions[row].height = 22
     for ci in range(2, 17):
         c = ws.cell(row=row, column=ci)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -227,7 +227,7 @@ def build(wb, year: int = 2026):
         ColorScaleRule(
             start_type="num",   start_value=0,        start_color="FFFFFFFF",
             mid_type="percentile", mid_value=50,       mid_color="FFFFEB84",
-            end_type="percentile", end_value=100,      end_color="FFC0392B"
+            end_type="percentile", end_value=100,      end_color="FFDC2626"
         )
     )
 
@@ -255,8 +255,8 @@ def _add_annual_chart(ws, header_row, data_start, data_end, anchor_row):
     bar.add_data(actual_ref, titles_from_data=False)
     bar.series[0].title = SeriesLabel(v="연간예산")
     bar.series[1].title = SeriesLabel(v="연간실제지출")
-    bar.series[0].graphicalProperties.solidFill = "2471A3"
-    bar.series[1].graphicalProperties.solidFill = "C0392B"
+    bar.series[0].graphicalProperties.solidFill = "2563EB"
+    bar.series[1].graphicalProperties.solidFill = "DC2626"
 
     # X축: 중분류(C열=3) 라벨
     cats = Reference(ws, min_col=3, min_row=data_start, max_row=data_end)
@@ -268,7 +268,7 @@ def _add_annual_chart(ws, header_row, data_start, data_end, anchor_row):
 def _section_title(ws, row, title, end_col=16):
     c = ws.cell(row=row, column=2, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("1A2B4A")
+    c.fill = _fill("1E293B")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"B{row}:{get_column_letter(end_col)}{row}")

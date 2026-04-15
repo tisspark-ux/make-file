@@ -75,7 +75,7 @@ def build(wb, year: int = 2026):
         _label_cell(ws, i, 2, label)
         c = ws.cell(row=i, column=3, value=value)
         c.font = _font(bold=(i == 3), size=12 if i == 3 else 11,
-                       color="C0392B" if i == 3 else "000000")
+                       color="DC2626" if i == 3 else "000000")
         c.alignment = _align()
         c.border = _border()
         if note:
@@ -88,7 +88,7 @@ def build(wb, year: int = 2026):
     headers = ["뱅샐 대분류", "뱅샐 소분류", "가계부 대분류"]
     for ci, h in enumerate(headers, start=2):
         c = ws.cell(row=9, column=ci, value=h)
-        c.fill = _fill("1A2B4A")
+        c.fill = _fill("1E293B")
         c.font = _font(bold=True, color="FFFFFF")
         c.alignment = _align()
         c.border = _border()
@@ -116,8 +116,8 @@ def build(wb, year: int = 2026):
 # ── 내부 헬퍼 ─────────────────────────────────────────────────
 def _section_title(ws, row, col, title):
     c = ws.cell(row=row, column=col, value=title)
-    c.font = _font(bold=True, size=12, color="1A2B4A")
-    c.fill = _fill("D6EAF8")
+    c.font = _font(bold=True, size=12, color="1E293B")
+    c.fill = _fill("DBEAFE")
     c.alignment = _align(h="left")
     ws.merge_cells(f"{get_column_letter(col)}{row}:{get_column_letter(col+3)}{row}")
     c.border = _border()
@@ -125,6 +125,6 @@ def _section_title(ws, row, col, title):
 def _label_cell(ws, row, col, label):
     c = ws.cell(row=row, column=col, value=label)
     c.font = _font(bold=True, color="FFFFFF")
-    c.fill = _fill("2471A3")
+    c.fill = _fill("2563EB")
     c.alignment = _align()
     c.border = _border()

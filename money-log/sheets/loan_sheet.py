@@ -90,7 +90,7 @@ def build(wb):
     # ════════════════════════════════════════════════════════
     ws.row_dimensions[row].height = 32
     t = ws.cell(row=row, column=1, value="대출 상환 추적표")
-    t.font = Font(name="Calibri Light", bold=False, size=16, color="1A2B4A")
+    t.font = Font(name="Calibri Light", bold=False, size=16, color="1E293B")
     t.alignment = _align(h="left")
     ws.merge_cells("A1:J1")
 
@@ -117,7 +117,7 @@ def build(wb):
     for r, label, val, fmt, note in info_rows:
         ws.row_dimensions[r].height = 22
         lc = ws.cell(row=r, column=1, value=label)
-        lc.fill = _fill("2471A3")
+        lc.fill = _fill("2563EB")
         lc.font = _font(bold=True, color="FFFFFF", size=10)
         lc.alignment = _align(h="left")
         lc.border = _border()
@@ -155,7 +155,7 @@ def build(wb):
     # 금리 테이블 헤더
     ws.row_dimensions[RATE_HDR_ROW].height = 22
     rate_headers = ["변동일", "총금리 (%)", "비고 (기준금리·변동 사유 등)"]
-    rate_hcolors = ["1A2B4A", "1E8449", "1A2B4A"]
+    rate_hcolors = ["1E293B", "16A34A", "1E293B"]
     rate_spans   = ["A", "B", "C:J"]  # 열 병합 범위
     for (col_start, span_end), h, hc in zip(
             [("A","A"),("B","B"),("C","J")], rate_headers, rate_hcolors):
@@ -171,7 +171,7 @@ def build(wb):
     for i in range(RATE_DATA_END - RATE_DATA_START + 1):
         r = RATE_DATA_START + i
         ws.row_dimensions[r].height = 20
-        fill_c = "E8F8F0" if i == 0 else ("F8FAFB" if i % 2 == 0 else "FFFFFF")
+        fill_c = "F0FDF4" if i == 0 else ("F8FAFC" if i % 2 == 0 else "FFFFFF")
 
         # 날짜 열
         date_cell = ws.cell(row=r, column=1,
@@ -243,7 +243,7 @@ def build(wb):
 
         # 레이블1
         lc1 = ws.cell(row=r, column=1, value=l1)
-        lc1.fill = _fill("1A2B4A")
+        lc1.fill = _fill("1E293B")
         lc1.font = _font(bold=True, color="FFFFFF", size=10)
         lc1.alignment = _align()
         lc1.border = _border()
@@ -251,7 +251,7 @@ def build(wb):
 
         # 값1
         vc1 = ws.cell(row=r, column=3, value=f1)
-        vc1.fill = _fill("D6EAF8")
+        vc1.fill = _fill("DBEAFE")
         vc1.font = _font(bold=True, size=12)
         vc1.alignment = _align()
         vc1.border = _border()
@@ -260,7 +260,7 @@ def build(wb):
 
         # 레이블2
         lc2 = ws.cell(row=r, column=5, value=l2)
-        lc2.fill = _fill("1E8449")
+        lc2.fill = _fill("16A34A")
         lc2.font = _font(bold=True, color="FFFFFF", size=10)
         lc2.alignment = _align()
         lc2.border = _border()
@@ -268,7 +268,7 @@ def build(wb):
 
         # 값2
         vc2 = ws.cell(row=r, column=7, value=f2)
-        vc2.fill = _fill("E8F8F0")
+        vc2.fill = _fill("F0FDF4")
         vc2.font = _font(bold=True, size=12)
         vc2.alignment = _align()
         vc2.border = _border()
@@ -294,8 +294,8 @@ def build(wb):
     ws.row_dimensions[SCHED_HDR_ROW].height = 22
     sched_headers = ["회차", "납입일", "적용금리", "월납입액", "이자",
                      "원금상환", "중도상환", "잔액", "납입", "비고"]
-    sched_hcolors = ["1A2B4A","1A2B4A","1E8449","1E8449","2471A3",
-                     "2471A3","C0392B","1A2B4A","2471A3","4A5568"]
+    sched_hcolors = ["1E293B","1E293B","16A34A","16A34A","2563EB",
+                     "2563EB","DC2626","1E293B","2563EB","475569"]
     for ci, (h, hc) in enumerate(zip(sched_headers, sched_hcolors), start=1):
         c = ws.cell(row=SCHED_HDR_ROW, column=ci, value=h)
         c.fill = _fill(hc)
@@ -306,7 +306,7 @@ def build(wb):
     # ── 데이터 행 생성 ──────────────────────────────────────
     for i in range(LOAN_MONTHS):
         r = SCHED_START + i
-        fill_c = "F8FAFB" if i % 2 == 0 else "FFFFFF"
+        fill_c = "F8FAFC" if i % 2 == 0 else "FFFFFF"
         ws.row_dimensions[r].height = 18
 
         # A: 회차
@@ -404,7 +404,7 @@ def build(wb):
     )
 
     # 미납 경고 (납입일이 오늘 이전 + 미납입) → 연한 빨강
-    overdue_fill = PatternFill(start_color="FFD0D0", end_color="FFD0D0", fill_type="solid")
+    overdue_fill = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
     ws.conditional_formatting.add(
         sched_range,
         FormulaRule(
@@ -420,7 +420,7 @@ def build(wb):
 def _section_title(ws, row, title):
     c = ws.cell(row=row, column=1, value=title)
     c.font = _font(bold=True, size=12, color="FFFFFF")
-    c.fill = _fill("1A2B4A")
+    c.fill = _fill("1E293B")
     c.alignment = _align(h="left")
     c.border = _border()
     ws.merge_cells(f"A{row}:J{row}")
